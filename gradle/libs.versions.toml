@@ -1,0 +1,31 @@
+[versions]
+# The latest versions are available at https://lambdaurora.dev/tools/import_quilt.html
+minecraft = "1.19.2"
+quilt_mappings = "1.19.2+build.3"
+quilt_loader = "0.17.2-beta.3"
+qsl = "3.0.0-beta.11"
+quilt-fapi = "4.0.0-beta.7+0.59.0-1.19.2"
+qkl = "0.1.0+"
+
+kotlin = "1.7.10"
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+quilt_mappings = { module = "org.quiltmc:quilt-mappings", version.ref = "quilt_mappings" }
+quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loader" }
+
+qsl = { module = "org.quiltmc:qsl", version.ref = "qsl" }
+quilt-fapi = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilt-fapi" }
+qkl = { module = "org.quiltmc.quilt-kotlin-libraries:quilt-kotlin-libraries", version.ref = "qkl" }
+
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+
+[bundles]
+kotlin = ["kotlin-stdlib"]
+qsl = ["quilt-fapi", "qkl"]
+
+[plugins]
+quilt_loom = { id = "org.quiltmc.loom", version = "0.12.+" }
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin" }
+nexus = { id = "io.github.gradle-nexus.publish-plugin", version = "1.1.0" }

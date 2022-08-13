@@ -1,0 +1,43 @@
+{
+    "schema_version": 1,
+    "quilt_loader": {
+        "group": "coffee.cypher.aptitude",
+        "id": "aptitude",
+        "version": "${version}",
+        "metadata": {
+            "name": "Aptitude",
+            "description": "Villager profession expansion",
+            "contributors": {
+                "Cypher121": "Owner"
+            },
+            "contact": {
+                "homepage": "https://github.com/Cypher121/aptitude",
+                "issues": "https://github.com/Cypher121/aptitude/issues",
+                "sources": "https://github.com/Cypher121/aptitude"
+            },
+            "icon": "assets/aptitude/icon.png"
+        },
+        "intermediate_mappings": "net.fabricmc:intermediary",
+        "entrypoints": {
+        },
+        "depends": [
+            {
+                "id": "quilt_loader",
+                "versions": ">=0.17.0-"
+            },
+            {
+                "id": "quilted_fabric_api",
+                "versions": ">=4.0.0-beta.7"
+            },
+            {
+                "id": "minecraft",
+                "versions": ">=1.19.2"
+            },
+            {
+                "id": "kettle",
+                "versions": ">=2.2.0-"
+            }
+        ]
+    },
+    "mixin": "aptitude.mixins.json"
+}
