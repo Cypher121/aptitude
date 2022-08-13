@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class AptitudeVillagerDataMixin {
     @Inject(at = @At("TAIL"), method = "initDataTracker")
     public void aptitude$trackAptitudeData(CallbackInfo ci) {
-        AptitudeVillagerDataUtil.startTrackingAptitude(((VillagerEntity) (Object) this).getDataTracker());
+        AptitudeVillagerDataUtil.startTrackingAptitude((VillagerEntity) (Object) this);
     }
 
     @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;Lnet/minecraft/village/VillagerType;)V")

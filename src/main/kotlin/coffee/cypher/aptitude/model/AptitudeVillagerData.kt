@@ -90,8 +90,8 @@ var VillagerEntity.aptitudeData: AptitudeVillagerData
         dataTracker.set(TRACKING_KEY, value)
     }
 
-fun DataTracker.startTrackingAptitude() {
-    startTracking(TRACKING_KEY, AptitudeVillagerData(emptyMap(), emptyMap()))
+fun VillagerEntity.startTrackingAptitude() {
+    dataTracker.startTracking(TRACKING_KEY, AptitudeVillagerData(emptyMap(), emptyMap()))
 }
 
 
