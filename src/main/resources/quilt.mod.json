@@ -19,6 +19,10 @@
         },
         "intermediate_mappings": "net.fabricmc:intermediary",
         "entrypoints": {
+            "init": {
+                "adapter": "kotlin",
+                "value": "coffee.cypher.aptitude.Aptitude"
+            }
         },
         "depends": [
             {

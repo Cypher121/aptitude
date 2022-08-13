@@ -1,0 +1,9 @@
+{
+    "replace": "false",
+    "values": {
+        "minecraft:cleric": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        }
+    }
+}

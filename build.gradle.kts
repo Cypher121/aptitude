@@ -43,6 +43,8 @@ dependencies {
     // QSL is not a complete API; You will need Quilted Fabric API to fill in the gaps.
     // Quilted Fabric API will automatically pull in the correct QSL version.
     modImplementation(libs.bundles.qsl)
+
+    modImplementation(libs.kettle)
 }
 
 val javaVersion = JavaVersion.VERSION_17
@@ -60,8 +62,6 @@ java {
 }
 
 kotlin {
-    explicitApi()
-
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(javaVersion.toString()))
     }

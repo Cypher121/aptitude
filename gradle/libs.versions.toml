@@ -7,6 +7,8 @@ qsl = "3.0.0-beta.11"
 quilt-fapi = "4.0.0-beta.7+0.59.0-1.19.2"
 qkl = "0.1.0+"
 
+kettle = "2.2.0+1.19.2"
+
 kotlin = "1.7.10"
 
 [libraries]
@@ -19,6 +21,8 @@ quilt-fapi = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", ver
 qkl = { module = "org.quiltmc.quilt-kotlin-libraries:quilt-kotlin-libraries", version.ref = "qkl" }
 
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+
+kettle = { module = "coffee.cypher.kettle:kettle", version.ref = "kettle" }
 
 [bundles]
 kotlin = ["kotlin-stdlib"]
