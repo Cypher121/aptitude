@@ -9,6 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.data.TrackedDataHandler
+import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.registry.Registry
@@ -99,6 +100,10 @@ private val TRACKING_KEY: TrackedData<AptitudeVillagerData> =
     DataTracker.registerData(VillagerEntity::class.java, TrackingHandler)
 
 private object TrackingHandler : TrackedDataHandler.SimpleHandler<AptitudeVillagerData> {
+    init {
+        TrackedDataHandlerRegistry.register(this)
+    }
+
     override fun write(buf: PacketByteBuf, value: AptitudeVillagerData) {
         buf.writeMap(value.professionAptitudes)
         buf.writeMap(value.professionMaxAptitudes)

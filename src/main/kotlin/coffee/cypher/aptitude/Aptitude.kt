@@ -1,6 +1,7 @@
 package coffee.cypher.aptitude
 
 import coffee.cypher.aptitude.registry.PROFESSION_EXTENSION_ATTACHMENT
+import coffee.cypher.aptitude.util.registerDebugUtils
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -8,6 +9,13 @@ import org.quiltmc.loader.api.ModContainer
 import org.quiltmc.qkl.wrapper.qsl.registerEvents
 import org.quiltmc.qkl.wrapper.qsl.resource.onDataPackReloadFinish
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer
+
+//TODO button on trading screen, goes to aptitude screen
+//TODO hook into level up/refresh trades for adding extra trades
+//TODO add memories/poi/tasks for advanced job sites
+//TODO(maybe) hook into refreshing trades, refresh advanced trades on advanced job site
+//TODO actually come up with effects
+//TODO item for nitwit replacement. aptitude 3 in random job, locked to that job (nbt hook into job loss/swap?)
 
 @Suppress("unused")
 object Aptitude : ModInitializer {
@@ -32,5 +40,7 @@ object Aptitude : ModInitializer {
                 }
             }
         }
+
+        registerDebugUtils()
     }
 }

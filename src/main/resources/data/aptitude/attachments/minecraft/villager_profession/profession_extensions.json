@@ -1,7 +1,43 @@
 {
     "replace": "false",
     "values": {
+        "minecraft:armorer": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        },
+        "minecraft:butcher": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        },
+        "minecraft:cartographer": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        },
         "minecraft:cleric": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        },
+        "minecraft:farmer": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        },
+        "minecraft:fisherman": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        },
+        "minecraft:fletcher": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        },
+        "minecraft:leatherworker": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        },
+        "minecraft:librarian": {
+            "advanced_workstations": ["minecraft:diamond_block"],
+            "aptitude_weight": 100
+        },
+        "minecraft:mason": {
             "advanced_workstations": ["minecraft:diamond_block"],
             "aptitude_weight": 100
         }
