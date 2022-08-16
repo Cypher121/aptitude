@@ -1,6 +1,6 @@
 package coffee.cypher.aptitude.util
 
-import coffee.cypher.aptitude.model.aptitudeData
+import coffee.cypher.aptitude.datamodel.aptitudeData
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.text.Text
 import org.quiltmc.qkl.wrapper.minecraft.brigadier.*

@@ -1,7 +1,7 @@
 package coffee.cypher.aptitude.mixins;
 
-import coffee.cypher.aptitude.model.AptitudeVillagerData;
-import coffee.cypher.aptitude.model.AptitudeVillagerDataUtil;
+import coffee.cypher.aptitude.datamodel.AptitudeVillagerData;
+import coffee.cypher.aptitude.datamodel.AptitudeVillagerDataUtil;
 import com.mojang.serialization.DataResult;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.nbt.NbtCompound;

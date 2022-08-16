@@ -1,4 +1,4 @@
-package coffee.cypher.aptitude.model
+package coffee.cypher.aptitude.datamodel
 
 import coffee.cypher.aptitude.util.ConstCodec
 import coffee.cypher.aptitude.util.asSuperType

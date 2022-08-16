@@ -1,4 +1,4 @@
-package coffee.cypher.aptitude.model
+package coffee.cypher.aptitude.datamodel
 
 import com.mojang.serialization.Codec
 

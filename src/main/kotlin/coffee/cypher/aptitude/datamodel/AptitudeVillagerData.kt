@@ -1,6 +1,6 @@
 @file:JvmName("AptitudeVillagerDataUtil")
 
-package coffee.cypher.aptitude.model
+package coffee.cypher.aptitude.datamodel
 
 import coffee.cypher.aptitude.registry.PROFESSION_EXTENSION_ATTACHMENT
 import coffee.cypher.aptitude.util.codecFunction

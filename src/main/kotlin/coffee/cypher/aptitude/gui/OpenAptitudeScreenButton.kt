@@ -26,16 +26,13 @@ class OpenAptitudeScreenButton(
     20,
     Text.literal("A"),
     PressAction {
-        val villager = screen.screenHandler.merchant as VillagerEntity
-
         screen.client.player?.openHandledScreen(
             SimpleNamedScreenHandlerFactory({ i, playerInventory, _ ->
-                AptitudeVillagerScreenHandler(
+                AptitudeVillagerScreenHandler.Client(
                     i,
-                    playerInventory,
-                    villager
+                    playerInventory
                 )
-            }, villager.displayName)
+            }, Text.empty())
         )
     },
     object : TooltipSupplier {
@@ -54,8 +51,4 @@ class OpenAptitudeScreenButton(
             consumer.accept(Text.translatable("aptitude.gui.open_screen"))
         }
     }
-) {
-    init {
-        Aptitude.logger.info(":AAAAAAAAAAAAAAAAAAAAAAAAA:")
-    }
-}
+)
