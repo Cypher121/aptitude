@@ -22,6 +22,10 @@
             "init": {
                 "adapter": "kotlin",
                 "value": "coffee.cypher.aptitude.Aptitude"
+            },
+            "client_init": {
+                "adapter": "kotlin",
+                "value": "coffee.cypher.aptitude.AptitudeClient"
             }
         },
         "depends": [

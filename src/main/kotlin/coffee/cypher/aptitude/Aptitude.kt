@@ -1,6 +1,7 @@
 package coffee.cypher.aptitude
 
 import coffee.cypher.aptitude.registry.PROFESSION_EXTENSION_ATTACHMENT
+import coffee.cypher.aptitude.registry.runRegistrations
 import coffee.cypher.aptitude.util.registerDebugUtils
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
@@ -30,7 +31,7 @@ object Aptitude : ModInitializer {
     override fun onInitialize(mod: ModContainer) {
         id = mod.metadata().id()
         logger.info("Loading Aptitude!")
-        PROFESSION_EXTENSION_ATTACHMENT
+        runRegistrations()
 
         registerEvents {
             onDataPackReloadFinish { _, _, _ ->

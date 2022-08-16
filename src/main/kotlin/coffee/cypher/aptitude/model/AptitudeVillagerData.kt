@@ -62,7 +62,8 @@ data class AptitudeVillagerData(
 
             val choices = PROFESSION_EXTENSION_ATTACHMENT.entryIterator()
                 .asSequence()
-                .associate { it.entry to it.value.aptitudeWeight }
+                .mapNotNull { (it.value as? ProfessionExtension.Regular)?.let { r -> it.entry to r.aptitudeWeight } }
+                .toMap()
                 .toMutableMap()
 
             val lv2Proficiencies = List(lv2ProficiencyCount) {
@@ -92,7 +93,7 @@ var VillagerEntity.aptitudeData: AptitudeVillagerData
     }
 
 fun VillagerEntity.startTrackingAptitude() {
-    dataTracker.startTracking(TRACKING_KEY, AptitudeVillagerData(emptyMap(), emptyMap()))
+    dataTracker.startTracking(TRACKING_KEY, AptitudeVillagerData.createRandom())
 }
 
 

@@ -2,44 +2,104 @@
     "replace": "false",
     "values": {
         "minecraft:armorer": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:coal_block",
+                "count": 6,
+                "description": "aptitude.workstations.coal"
+            },
             "aptitude_weight": 100
         },
         "minecraft:butcher": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:sweet_berry_bush",
+                "count": 2,
+                "description": "aptitude.workstations.sweet_berry_bush"
+            },
             "aptitude_weight": 100
         },
         "minecraft:cartographer": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:lodestone",
+                "description": "aptitude.workstations.lodestone"
+            },
             "aptitude_weight": 100
         },
         "minecraft:cleric": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:soul_campfire",
+                "count": 2,
+                "description": "aptitude.workstations.soul_campfire"
+            },
             "aptitude_weight": 100
         },
         "minecraft:farmer": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:bone_block",
+                "count": 6,
+                "description": "aptitude.workstations.bone_block"
+            },
             "aptitude_weight": 100
         },
         "minecraft:fisherman": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:conduit",
+                "description": "aptitude.workstations.conduit"
+            },
             "aptitude_weight": 100
         },
         "minecraft:fletcher": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:target",
+                "count": 1,
+                "description": "aptitude.workstations.target"
+            },
             "aptitude_weight": 100
         },
         "minecraft:leatherworker": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:cobweb",
+                "count": 3,
+                "description": "aptitude.workstations.cobweb"
+            },
             "aptitude_weight": 100
         },
         "minecraft:librarian": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:candle",
+                "count": 4,
+                "description": "aptitude.workstations.candle"
+            },
             "aptitude_weight": 100
         },
         "minecraft:mason": {
-            "advanced_workstations": ["minecraft:diamond_block"],
+            "workstation_upgrade": {
+                "upgrade": "minecraft:amethyst_block",
+                "count": 2,
+                "description": "aptitude.workstations.amethyst_block"
+            },
             "aptitude_weight": 100
-        }
+        },
+        "minecraft:shepherd": {
+            "workstation_upgrade": {
+                "upgrade": "minecraft:beehive",
+                "description": "aptitude.workstations.beehive"
+            },
+            "aptitude_weight": 100
+        },
+        "minecraft:toolsmith": {
+            "workstation_upgrade": {
+                "upgrade": "minecraft:ancient_debris",
+                "description": "aptitude.workstations.ancient_debris"
+            },
+            "aptitude_weight": 100
+        },
+        "minecraft:weaponsmith": {
+            "workstation_upgrade": {
+                "upgrade": "minecraft:anvil",
+                "description": "aptitude.workstations.anvil"
+            },
+            "aptitude_weight": 100
+        },
+        "minecraft:nitwit": "nitwit"
     }
 }

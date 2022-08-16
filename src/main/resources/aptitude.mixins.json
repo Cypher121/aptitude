@@ -3,7 +3,10 @@
     "minVersion": "0.8",
     "package": "coffee.cypher.aptitude.mixins",
     "compatibilityLevel": "JAVA_17",
-    "mixins": ["AptitudeVillagerDataMixin"],
+    "mixins": [
+        "AptitudeMerchantScreenHandlerMixin", "AptitudeVillagerDataMixin"
+    ],
+    "client": ["AptitudeMerchantScreenMixin"],
     "injectors": {
         "defaultRequire": 1
     }
