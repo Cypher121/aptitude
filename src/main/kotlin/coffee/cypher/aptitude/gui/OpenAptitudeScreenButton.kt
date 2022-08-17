@@ -1,15 +1,12 @@
 package coffee.cypher.aptitude.gui
 
-import coffee.cypher.aptitude.Aptitude
-import coffee.cypher.aptitude.mixinaccessors.merchant
+import coffee.cypher.aptitude.gui.packets.AptitudeToggleVillagerScreenC2SPacket
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.gui.screen.ingame.MerchantScreen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.ButtonWidget.PressAction
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.entity.passive.VillagerEntity
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory
 import net.minecraft.text.Text
 import org.quiltmc.qkl.wrapper.qsl.client.screen.client
 import java.util.function.Consumer
@@ -26,14 +23,7 @@ class OpenAptitudeScreenButton(
     20,
     Text.literal("A"),
     PressAction {
-        screen.client.player?.openHandledScreen(
-            SimpleNamedScreenHandlerFactory({ i, playerInventory, _ ->
-                AptitudeVillagerScreenHandler.Client(
-                    i,
-                    playerInventory
-                )
-            }, Text.empty())
-        )
+        AptitudeToggleVillagerScreenC2SPacket(screen.screenHandler.syncId, true).send()
     },
     object : TooltipSupplier {
         override fun onTooltip(buttonWidget: ButtonWidget, matrixStack: MatrixStack, i: Int, j: Int) {

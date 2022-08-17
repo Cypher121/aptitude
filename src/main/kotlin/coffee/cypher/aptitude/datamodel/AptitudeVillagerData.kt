@@ -18,26 +18,25 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 
 data class AptitudeVillagerData(
-    val professionAptitudes: Map<VillagerProfession, AptitudeLevel>,
-    val professionMaxAptitudes: Map<VillagerProfession, AptitudeLevel>
+    val professionAptitudes: Map<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>
 ) {
     companion object {
+        private val ENTRY_CODEC: Codec<Pair<AptitudeLevel, AptitudeLevel>> = RecordCodecBuilder.create { pair ->
+            pair.group(
+                AptitudeLevel.CODEC.fieldOf("Current").forGetter { it.first },
+                AptitudeLevel.CODEC.fieldOf("Max").forGetter { it.second }
+            ).apply(pair, pair.stable({ a: AptitudeLevel, b: AptitudeLevel -> a to b }.codecFunction))
+        }
+
         @JvmField
         val CODEC: Codec<AptitudeVillagerData> = RecordCodecBuilder.create {
             it.group(
                 Codec.simpleMap(
                     Registry.VILLAGER_PROFESSION.codec,
-                    AptitudeLevel.CODEC,
+                    ENTRY_CODEC,
                     Registry.VILLAGER_PROFESSION
                 )
-                    .fieldOf("CurrentAptitudes")
-                    .forGetter(AptitudeVillagerData::professionAptitudes),
-                Codec.simpleMap(
-                    Registry.VILLAGER_PROFESSION.codec,
-                    AptitudeLevel.CODEC,
-                    Registry.VILLAGER_PROFESSION
-                )
-                    .fieldOf("MaxAptitudes")
+                    .fieldOf("Aptitudes")
                     .forGetter(AptitudeVillagerData::professionAptitudes)
             ).apply(it, it.stable(::AptitudeVillagerData.codecFunction))
         }
@@ -56,9 +55,9 @@ data class AptitudeVillagerData(
                 return added
             }
 
-            val totalProficiencies = Random.nextInt(3..5)
-            val lv2ProficiencyCount = Random.nextInt(1..2)
-            val lv1ProficiencyCount = totalProficiencies - lv2ProficiencyCount
+            val totalAptitudes = Random.nextInt(3..5)
+            val lv2AptitudeCount = Random.nextInt(1..2)
+            val lv1AptitudeCount = totalAptitudes - lv2AptitudeCount
 
             val choices = PROFESSION_EXTENSION_ATTACHMENT.entryIterator()
                 .asSequence()
@@ -66,22 +65,19 @@ data class AptitudeVillagerData(
                 .toMap()
                 .toMutableMap()
 
-            val lv2Proficiencies = List(lv2ProficiencyCount) {
+            val lv2Aptitudes = List(lv2AptitudeCount) {
                 pickAndRemove(choices)
             }
 
-            val lv1Proficiencies = List(lv1ProficiencyCount) {
+            val lv1Aptitudes = List(lv1AptitudeCount) {
                 pickAndRemove(choices)
             }
 
-            val starting = (lv1Proficiencies + lv2Proficiencies).associateWith {
-                AptitudeLevel.NONE
-            }
 
-            val maximum = lv1Proficiencies.associateWith { AptitudeLevel.SKILLED } +
-                    lv2Proficiencies.associateWith { AptitudeLevel.ADVANCED }
+            val aptitudes = lv1Aptitudes.associateWith { AptitudeLevel.SKILLED } +
+                    lv2Aptitudes.associateWith { AptitudeLevel.ADVANCED }
 
-            return AptitudeVillagerData(starting, maximum)
+            return AptitudeVillagerData(aptitudes.mapValues { AptitudeLevel.NONE to it.value })
         }
     }
 }
@@ -106,30 +102,28 @@ private object TrackingHandler : TrackedDataHandler.SimpleHandler<AptitudeVillag
     }
 
     override fun write(buf: PacketByteBuf, value: AptitudeVillagerData) {
-        buf.writeMap(value.professionAptitudes)
-        buf.writeMap(value.professionMaxAptitudes)
+        buf.writeAptitudeMap(value.professionAptitudes)
     }
 
     override fun read(buf: PacketByteBuf): AptitudeVillagerData {
-        return AptitudeVillagerData(buf.readMap(), buf.readMap())
+        return AptitudeVillagerData(buf.readAptitudeMap())
     }
+}
 
-    private fun PacketByteBuf.writeMap(map: Map<VillagerProfession, AptitudeLevel>) {
-        writeVarInt(map.size)
+fun PacketByteBuf.writeAptitudeMap(map: Map<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>) {
+    writeVarInt(map.size)
 
-        map.forEach {
-            writeId(Registry.VILLAGER_PROFESSION, it.key)
-            writeByte(it.value.ordinal)
-        }
+    map.forEach {
+        writeId(Registry.VILLAGER_PROFESSION, it.key)
+        writeByte(it.value.first.ordinal)
+        writeByte(it.value.second.ordinal)
     }
+}
 
-    private fun PacketByteBuf.readMap(): Map<VillagerProfession, AptitudeLevel> {
-        return mutableMapOf<VillagerProfession, AptitudeLevel>().also { r ->
-            repeat(readVarInt()) {
-                val key = readById(Registry.VILLAGER_PROFESSION) ?: return@repeat
+fun PacketByteBuf.readAptitudeMap(): Map<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>> {
+    return List(readVarInt()) {
+        val key = readById(Registry.VILLAGER_PROFESSION) ?: return@List null
 
-                r += key to enumValues<AptitudeLevel>()[readByte().toInt()]
-            }
-        }
-    }
+        key to (enumValues<AptitudeLevel>()[readByte().toInt()] to enumValues<AptitudeLevel>()[readByte().toInt()])
+    }.filterNotNull().toMap()
 }

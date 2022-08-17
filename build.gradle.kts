@@ -4,6 +4,7 @@ import groovy.json.JsonSlurper
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
+import coffee.cypher.gradleutil.filters.FlatteningJsonFilter
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -20,8 +21,7 @@ base {
     archivesBaseName = "aptitude"
 }
 
-val modProps =
-    JsonSlurper().parseText(File("mod.json").readText()) as Map<String, Any>
+val modProps = JsonSlurper().parseText(File("mod.json").readText()) as Map<String, Any>
 
 version = (modProps.getValue("core") as Map<String, Any>).getValue("version")
 group = "coffee.cypher.aptitude"
@@ -73,6 +73,11 @@ tasks {
 
         filesMatching("quilt.mod.json") {
             expand(mapOf("version" to version))
+        }
+
+        filesMatching("**/*.flatten.json") {
+            filter(FlatteningJsonFilter::class.java)
+            path = path.replace("\\.flatten\\.json$".toRegex(), ".json")
         }
     }
 

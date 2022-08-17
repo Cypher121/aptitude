@@ -19,14 +19,10 @@ fun registerDebugUtils() {
                         val target = villager().value()
 
                         if (target is VillagerEntity) {
-                            Text.empty()
-                                .append(
-                                    target.aptitudeData.professionAptitudes.toList()
-                                        .joinToString(", ") { "${it.first.name} - ${it.second.name}" })
-                                .append("\n")
-                                .append(
-                                    target.aptitudeData.professionMaxAptitudes.toList()
-                                        .joinToString(", ") { "${it.first.name} - ${it.second.name}" })
+                            Text.literal(
+                                target.aptitudeData.professionAptitudes.toList()
+                                    .joinToString(", ") { "${it.first.name} - ${it.second.first.name} / ${it.second.second.name}" }
+                            )
                                 .let(this::sendFeedback)
 
                             CommandResult.success()

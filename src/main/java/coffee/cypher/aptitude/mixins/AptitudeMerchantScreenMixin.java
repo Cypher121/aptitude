@@ -1,15 +1,11 @@
 package coffee.cypher.aptitude.mixins;
 
-import coffee.cypher.aptitude.Aptitude;
 import coffee.cypher.aptitude.gui.OpenAptitudeScreenButton;
-import coffee.cypher.aptitude.mixinaccessors.MerchantAccessor;
-import coffee.cypher.aptitude.mixinaccessors.MerchantAccessorKt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.MerchantScreen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.text.Text;
