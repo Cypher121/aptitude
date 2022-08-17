@@ -21,13 +21,15 @@ base {
     archivesBaseName = "aptitude"
 }
 
-val modProps = JsonSlurper().parseText(File("mod.json").readText()) as Map<String, Any>
+val modProps =
+    JsonSlurper().parseText(File("mod.json").readText()) as Map<String, Any>
 
 version = (modProps.getValue("core") as Map<String, Any>).getValue("version")
 group = "coffee.cypher.aptitude"
 
 repositories {
     mavenCentral()
+    maven("https://maven.gegy.dev/")
 }
 
 dependencies {

@@ -7,7 +7,6 @@ import coffee.cypher.aptitude.gui.packets.AptitudeToggleVillagerScreenC2SPacket
 import coffee.cypher.aptitude.util.register
 import coffee.cypher.aptitude.util.toGenericRegistry
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.util.registry.Registry
 import net.minecraft.village.VillagerProfession
@@ -23,8 +22,8 @@ val PROFESSION_EXTENSION_ATTACHMENT: RegistryEntryAttachment<VillagerProfession,
     ).build()
 }
 
-val APTITUDE_VILLAGER_SCREEN_HANDLER: ScreenHandlerType<AptitudeVillagerScreenHandler> by register {
-    ExtendedScreenHandlerType<AptitudeVillagerScreenHandler>(
+val APTITUDE_VILLAGER_SCREEN_HANDLER: ScreenHandlerType<AptitudeVillagerScreenHandler.Client> by register {
+    ExtendedScreenHandlerType(
         AptitudeVillagerScreenHandler::Client
     ) withPath "aptitude_villager_screen" toGenericRegistry Registry.SCREEN_HANDLER
 }
