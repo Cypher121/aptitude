@@ -72,7 +72,10 @@ class AptitudeToggleVillagerScreenC2SPacket(val syncId: Int, val enableAptitude:
                         override fun getDisplayName() = villager.displayName
 
                         override fun writeScreenOpeningData(player: ServerPlayerEntity, buf: PacketByteBuf) {
-                            buf.writeAptitudeMap(villager.aptitudeData.professionAptitudes)
+                            buf.writeAptitudeMap(
+                                villager.aptitudeData.professionAptitudes,
+                                villager.villagerData.profession
+                            )
                         }
                     })
 

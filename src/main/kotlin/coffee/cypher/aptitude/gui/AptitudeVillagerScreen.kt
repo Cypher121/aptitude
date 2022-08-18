@@ -8,25 +8,21 @@ import coffee.cypher.aptitude.gui.packets.AptitudeToggleVillagerScreenC2SPacket
 import com.mojang.blaze3d.systems.RenderSystem
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.minecraft.client.gui.Drawable
 import net.minecraft.client.gui.screen.ingame.HandledScreen
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.ButtonWidget.PressAction
-import net.minecraft.client.gui.widget.ClickableWidget
-import net.minecraft.client.gui.widget.EntryListWidget
 import net.minecraft.client.gui.widget.TexturedButtonWidget
 import net.minecraft.client.render.GameRenderer
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.text.ScreenTexts
 import net.minecraft.text.Text
 import net.minecraft.util.Language
+import net.minecraft.util.registry.Registry
 import net.minecraft.village.VillagerProfession
+import org.quiltmc.qkl.wrapper.qsl.client.screen.buttons
 import java.util.function.Consumer
 import org.quiltmc.qkl.wrapper.qsl.client.screen.client as clientNotNull
 
-private const val TEXTURE_PATH = "textures/gui/aptitude_villager_bg.png"
 
 @Environment(EnvType.CLIENT)
 class AptitudeVillagerScreen(
@@ -38,8 +34,26 @@ class AptitudeVillagerScreen(
     playerInventory,
     text
 ) {
-    val list = handler.aptitudes.toList()
+    companion object {
+        private const val TEXTURE_PATH = "textures/gui/aptitude_villager_bg.png"
+
+        private const val TEX_WIDTH = 512
+        private const val TEX_HEIGHT = 256
+    }
+
+    private val list = handler.aptitudes.toList()
         .sortedByDescending { it.second.second.ordinal }
+
+
+    private var entries = listOf<Entry>()
+
+    init {
+        backgroundWidth = 276
+        backgroundHeight = 196
+
+        playerInventoryTitleX = 107
+        playerInventoryTitleY = backgroundHeight - 94
+    }
 
     override fun drawBackground(
         matrices: MatrixStack,
@@ -50,32 +64,36 @@ class AptitudeVillagerScreen(
         RenderSystem.setShader(GameRenderer::getPositionTexShader)
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
         RenderSystem.setShaderTexture(0, Aptitude.id(TEXTURE_PATH))
-        val i = (width - backgroundWidth) / 2
-        val j = (height - backgroundHeight) / 2
         drawTexture(
-            matrices, i, j,
-            zOffset, 0.0f, 0.0f, backgroundWidth, backgroundHeight, 512, 256
+            matrices,
+            x, y, zOffset,
+            0.0f, 0.0f,
+            backgroundWidth, backgroundHeight,
+            TEX_WIDTH, TEX_HEIGHT
         )
+    }
+
+    override fun drawForeground(matrices: MatrixStack, mouseX: Int, mouseY: Int) {
+        super.drawForeground(matrices, mouseX, mouseY)
+        entries.forEach {
+            it.render(matrices)
+        }
     }
 
     override fun init() {
         super.init()
 
-        backgroundWidth = 276
-        backgroundHeight = 196
-        playerInventoryTitleX = 107
-        playerInventoryTitleY += 31
-        titleX =
-            (backgroundWidth - (client?.textRenderer?.getWidth(
-                Language.getInstance().reorder(title)
-            ) ?: 0)) / 2
+        titleX = (backgroundWidth - textRenderer.getWidth(Language.getInstance().reorder(title))) / 2
 
-        addDrawableChild(ReturnToMerchantButton())
-        list.forEach {
-            addDrawable(Entry(5, 26, 88, 20, it))
+        buttons += ReturnToMerchantButton()
+
+        val maxPossibleLevel = list.maxOf { it.second.second }.ordinal
+        entries = list.mapIndexed { index, it ->
+            Entry(this, 5, 26, index, it, it.first == handler.active, maxPossibleLevel)
         }
     }
 
+    //TODO positioning constants
     @Environment(EnvType.CLIENT)
     inner class ReturnToMerchantButton : TexturedButtonWidget(
         (width + backgroundWidth) / 2 - 24,
@@ -86,8 +104,7 @@ class AptitudeVillagerScreen(
         3,
         20,
         Aptitude.id(TEXTURE_PATH),
-        512,
-        256,
+        TEX_WIDTH, TEX_HEIGHT,
         PressAction {
             AptitudeToggleVillagerScreenC2SPacket(
                 screenHandler.syncId,
@@ -119,26 +136,101 @@ class AptitudeVillagerScreen(
     )
 
     @Environment(EnvType.CLIENT)
-    inner class Entry(
+    private class Entry(
+        val screen: AptitudeVillagerScreen,
         val entryX: Int, val entryY: Int,
-        val entryWidth: Int, val entryHeight: Int,
-        val entry: Pair<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>
-    ) : Drawable {
-        override fun render(
-            matrices: MatrixStack,
-            mouseX: Int,
-            mouseY: Int,
-            tickDelta: Float
+        val index: Int,
+        val entry: Pair<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>,
+        val isActive: Boolean,
+        val maxPossibleLevel: Int
+    ) {
+        companion object {
+            const val LEVEL_BASE_U = 13f
+            const val LEVEL_V = 199f
+
+            const val LEVEL_WIDTH = 8
+            const val LEVEL_HEIGHT = 8
+
+            const val LEVEL_OFFSET_BOTTOM = 2
+
+            const val LEVEL_RENDER_SPACING = 1
+            const val LEVEL_RIGHT_MARGIN = 1
+
+            const val NAME_OFFSET_LEFT = 1f
+            const val NAME_OFFSET_TOP = 1f
+
+            const val ENTRY_WIDTH = 88
+            const val ENTRY_HEIGHT = 20
+
+            const val BACKGROUND_U = 13f
+            const val BACKGROUND_V = 208f
+
+            const val TEXT_COLOR = 0x404040
+            const val ACTIVE_TEXT_COLOR = 0xFFAA00
+
+            const val LEVEL_TOP = ENTRY_HEIGHT - LEVEL_OFFSET_BOTTOM - LEVEL_HEIGHT
+        }
+
+        fun render(
+            matrices: MatrixStack
         ) {
-            val mid = entryY + 10 + (backgroundHeight - height) / 2
-            val left = entryX + 5 + (backgroundWidth - width) / 2
-            textRenderer.draw(
+            matrices.push()
+            matrices.translate(entryX.toDouble(), (entryY + index * ENTRY_HEIGHT).toDouble(), 0.0)
+
+            RenderSystem.setShader(GameRenderer::getPositionTexShader)
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
+            RenderSystem.setShaderTexture(0, Aptitude.id(TEXTURE_PATH))
+
+            drawTexture(
                 matrices,
-                Text.literal(entry.second.first.name),
-                left.toFloat(),
-                mid.toFloat(),
-                4210752
+                0, 0,
+                BACKGROUND_U, BACKGROUND_V,
+                ENTRY_WIDTH, ENTRY_HEIGHT,
+                TEX_WIDTH, TEX_HEIGHT
             )
+
+            val (profession, levels) = entry
+            val (current, max) = levels
+            val professionDisplayKey =
+                "entity.minecraft.villager.${Registry.VILLAGER_PROFESSION.getId(profession).path}"
+
+            screen.textRenderer.draw(
+                matrices,
+                Text.translatable(professionDisplayKey),
+                NAME_OFFSET_LEFT,
+                NAME_OFFSET_TOP,
+                if (isActive) ACTIVE_TEXT_COLOR else TEXT_COLOR
+            )
+
+            val firstLevelLeft = ENTRY_WIDTH - LEVEL_RIGHT_MARGIN -
+                    maxPossibleLevel * LEVEL_WIDTH -
+                    (maxPossibleLevel - 1) * LEVEL_RENDER_SPACING
+
+            RenderSystem.setShader(GameRenderer::getPositionTexShader)
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
+            RenderSystem.setShaderTexture(0, Aptitude.id(TEXTURE_PATH))
+
+            for (i in 1..current.ordinal) {
+                drawTexture(
+                    matrices,
+                    firstLevelLeft + (LEVEL_WIDTH + LEVEL_RENDER_SPACING) * (i - 1), LEVEL_TOP,
+                    LEVEL_BASE_U + (LEVEL_WIDTH * i), LEVEL_V,
+                    LEVEL_WIDTH, LEVEL_HEIGHT,
+                    TEX_WIDTH, TEX_HEIGHT
+                )
+            }
+
+            for (i in (current.ordinal + 1)..max.ordinal) {
+                drawTexture(
+                    matrices,
+                    firstLevelLeft + (LEVEL_WIDTH + LEVEL_RENDER_SPACING) * (i - 1), LEVEL_TOP,
+                    LEVEL_BASE_U, LEVEL_V,
+                    LEVEL_WIDTH, LEVEL_HEIGHT,
+                    TEX_WIDTH, TEX_HEIGHT
+                )
+            }
+
+            matrices.pop()
         }
     }
 }

@@ -4,8 +4,8 @@
     "package": "coffee.cypher.aptitude.mixins",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-        "AptitudeMerchantScreenHandlerMixin", "AptitudeVillagerAccessorMixin",
-        "AptitudeVillagerDataMixin"
+        "AptitudeMerchantScreenHandlerMixin", "AptitudeScreenHandlerMixin",
+        "AptitudeVillagerAccessorMixin", "AptitudeVillagerDataMixin"
     ],
     "client": ["AptitudeMerchantScreenMixin"],
     "injectors": {

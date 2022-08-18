@@ -20,6 +20,48 @@ import kotlin.random.nextInt
 data class AptitudeVillagerData(
     val professionAptitudes: Map<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>
 ) {
+    fun withAptitudeLevels(
+        profession: VillagerProfession,
+        current: AptitudeLevel,
+        max: AptitudeLevel
+    ): AptitudeVillagerData {
+        if (current > max) {
+            throw IllegalArgumentException(
+                "Current aptitude for ${profession.name} ($current) would exceed max $max"
+            )
+        }
+        return copy(professionAptitudes = professionAptitudes + mapOf(profession to (current to max)))
+    }
+
+    fun withCurrentAptitude(
+        profession: VillagerProfession,
+        current: AptitudeLevel,
+        allowElevateMax: Boolean = false
+    ): AptitudeVillagerData {
+        val currentMax = getMaxAptitude(profession)
+
+        val newMax = if (current > currentMax && allowElevateMax)
+            current
+        else currentMax
+
+        return withAptitudeLevels(profession, current, newMax)
+    }
+
+    fun withMaxAptitude(
+        profession: VillagerProfession,
+        max: AptitudeLevel
+    ): AptitudeVillagerData {
+        return withAptitudeLevels(profession, getCurrentAptitude(profession), max)
+    }
+
+    fun getCurrentAptitude(profession: VillagerProfession): AptitudeLevel {
+        return professionAptitudes[profession]?.first ?: AptitudeLevel.NONE
+    }
+
+    fun getMaxAptitude(profession: VillagerProfession): AptitudeLevel {
+        return professionAptitudes[profession]?.second ?: AptitudeLevel.NONE
+    }
+
     companion object {
         private val ENTRY_CODEC: Codec<Pair<AptitudeLevel, AptitudeLevel>> = RecordCodecBuilder.create { pair ->
             pair.group(
@@ -110,13 +152,26 @@ private object TrackingHandler : TrackedDataHandler.SimpleHandler<AptitudeVillag
     }
 }
 
-fun PacketByteBuf.writeAptitudeMap(map: Map<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>) {
+fun PacketByteBuf.writeAptitudeMap(
+    map: Map<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>,
+    active: VillagerProfession? = null
+) {
     writeVarInt(map.size)
 
-    map.forEach {
+    var activeIndex = -1
+
+    map.entries.forEachIndexed { index, it ->
         writeId(Registry.VILLAGER_PROFESSION, it.key)
         writeByte(it.value.first.ordinal)
         writeByte(it.value.second.ordinal)
+
+        if (active == it.key) {
+            activeIndex = index
+        }
+    }
+
+    if (active != null) {
+        writeVarInt(activeIndex)
     }
 }
 
@@ -126,4 +181,20 @@ fun PacketByteBuf.readAptitudeMap(): Map<VillagerProfession, Pair<AptitudeLevel,
 
         key to (enumValues<AptitudeLevel>()[readByte().toInt()] to enumValues<AptitudeLevel>()[readByte().toInt()])
     }.filterNotNull().toMap()
+}
+
+fun PacketByteBuf.readAptitudeMapWithActive(): Pair<Map<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>, VillagerProfession?> {
+    val list = List(readVarInt()) {
+        val key = readById(Registry.VILLAGER_PROFESSION) ?: return@List null
+
+        key to (enumValues<AptitudeLevel>()[readByte().toInt()] to enumValues<AptitudeLevel>()[readByte().toInt()])
+    }
+
+    val idx = readVarInt()
+
+    if (idx < 0) {
+        return list.filterNotNull().toMap() to null
+    }
+
+    return list.filterNotNull().toMap() to list[idx]?.first
 }
