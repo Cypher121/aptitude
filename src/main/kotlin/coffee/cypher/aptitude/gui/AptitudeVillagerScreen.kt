@@ -35,10 +35,10 @@ class AptitudeVillagerScreen(
     text
 ) {
     companion object {
-        private const val TEXTURE_PATH = "textures/gui/aptitude_villager_bg.png"
+        const val TEXTURE_PATH = "textures/gui/aptitude_villager.png"
 
-        private const val TEX_WIDTH = 512
-        private const val TEX_HEIGHT = 256
+        const val TEX_WIDTH = 512
+        const val TEX_HEIGHT = 256
     }
 
     private val list = handler.aptitudes.toList()

@@ -4,8 +4,8 @@ import coffee.cypher.aptitude.Aptitude
 import coffee.cypher.aptitude.datamodel.aptitudeData
 import coffee.cypher.aptitude.datamodel.writeAptitudeMap
 import coffee.cypher.aptitude.gui.AptitudeVillagerScreenHandler
+import coffee.cypher.aptitude.mixinaccessors.beginTradeWith
 import coffee.cypher.aptitude.mixinaccessors.merchant
-import coffee.cypher.aptitude.mixins.AptitudeVillagerAccessorMixin
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
@@ -87,7 +87,7 @@ class AptitudeToggleVillagerScreenC2SPacket(val syncId: Int, val enableAptitude:
                 server.execute {
                     player.closeHandledScreen()
 
-                    (screenHandler.villager as AptitudeVillagerAccessorMixin).callBeginTradeWith(player)
+                    screenHandler.villager.beginTradeWith(player)
                 }
             }
         }

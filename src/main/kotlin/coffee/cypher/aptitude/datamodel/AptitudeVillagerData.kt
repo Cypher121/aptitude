@@ -54,6 +54,10 @@ data class AptitudeVillagerData(
         return withAptitudeLevels(profession, getCurrentAptitude(profession), max)
     }
 
+    fun getAptitudeLevels(profession: VillagerProfession): Pair<AptitudeLevel, AptitudeLevel> {
+        return professionAptitudes.getOrDefault(profession, AptitudeLevel.NONE to AptitudeLevel.NONE)
+    }
+
     fun getCurrentAptitude(profession: VillagerProfession): AptitudeLevel {
         return professionAptitudes[profession]?.first ?: AptitudeLevel.NONE
     }

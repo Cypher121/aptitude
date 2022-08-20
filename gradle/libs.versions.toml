@@ -8,7 +8,7 @@ quilt-fapi = "4.0.0-beta.9+0.60.0-1.19.2"
 qkl = "0.1.0+"
 databreaker = "0.2.7"
 
-kettle = "2.2.0+1.19.2"
+kettle = "2.2.1+1.19.2"
 
 kotlin = "1.7.10"
 

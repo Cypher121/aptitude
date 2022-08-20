@@ -1,6 +1,6 @@
 package coffee.cypher.aptitude.util
 
-import coffee.cypher.aptitude.mixins.AptitudeScreenHandlerMixin
+import coffee.cypher.aptitude.mixinaccessors.insertItem
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
@@ -20,9 +20,11 @@ value class InventorySlots(val internalInventorySize: Int) {
         get() = internalInventorySize + 27 until internalInventorySize + 36
 }
 
-fun ScreenHandler.transferWithinPlayerInventory(playerInventoryOffset: Int, player: PlayerEntity, index: Int): ItemStack {
-    val insertItem = (this as AptitudeScreenHandlerMixin)::callInsertItem
-
+fun ScreenHandler.transferWithinPlayerInventory(
+    playerInventoryOffset: Int,
+    player: PlayerEntity,
+    index: Int
+): ItemStack {
     if (index !in slots.indices) {
         return ItemStack.EMPTY
     }
@@ -39,20 +41,12 @@ fun ScreenHandler.transferWithinPlayerInventory(playerInventoryOffset: Int, play
     val slotRanges = InventorySlots(playerInventoryOffset)
 
     if (index in slotRanges.playerMainInventorySlots) {
-        if (!insertItem(
-                insertingStack,
-                slotRanges.playerHotbarSlots.first,
-                slotRanges.playerHotbarSlots.last,
-                false
-            )
-        ) {
+        if (!insertItem(insertingStack, slotRanges.playerHotbarSlots)) {
             return ItemStack.EMPTY
         }
     } else if (index in slotRanges.playerHotbarSlots && !insertItem(
             insertingStack,
-            slotRanges.playerMainInventorySlots.first,
-            slotRanges.playerMainInventorySlots.last,
-            false
+            slotRanges.playerMainInventorySlots
         )
     ) {
         return ItemStack.EMPTY

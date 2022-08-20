@@ -17,7 +17,14 @@
         },
         "gui": {
             "open_screen": "Open Aptitude",
-            "close_screen": "Return to trade"
+            "close_screen": "Return to trade",
+            "special_trade": "Trade offer provided by aptitude (level: %s)"
+        },
+        "level": {
+            "0": "None",
+            "1": "Skilled",
+            "2": "Advanced",
+            "3": "Adept"
         }
     }
 }

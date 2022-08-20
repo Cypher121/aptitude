@@ -1,5 +1,6 @@
 package coffee.cypher.aptitude.util
 
+import coffee.cypher.aptitude.actions.increaseAptitude
 import coffee.cypher.aptitude.datamodel.AptitudeLevel
 import coffee.cypher.aptitude.datamodel.ProfessionExtension
 import coffee.cypher.aptitude.datamodel.aptitudeData
@@ -32,6 +33,34 @@ fun registerDebugUtils() {
                                 .let(this::sendFeedback)
 
                             CommandResult.success()
+                        } else {
+                            CommandResult.failure(Text.literal("Not a villager"))
+                        }
+                    }
+                }
+            }
+
+            register("level_aptitude") {
+                required(entity("villager")) { villager ->
+                    executeWithResult {
+                        val target = villager().value()
+
+                        if (target is VillagerEntity) {
+                            val (current, max) = target.aptitudeData.getAptitudeLevels(target.villagerData.profession)
+
+                            if (current < max) {
+                                if (target.villagerData.level >= current.next.professionLevel) {
+                                    increaseAptitude(target)
+
+                                    sendFeedback(Text.literal("Aptitude increased"))
+
+                                    CommandResult.success()
+                                } else {
+                                    CommandResult.failure(Text.literal("Profession not high enough"))
+                                }
+                            } else {
+                                CommandResult.failure(Text.literal("Max aptitude reached"))
+                            }
                         } else {
                             CommandResult.failure(Text.literal("Not a villager"))
                         }

@@ -87,8 +87,6 @@ tasks {
         kotlinOptions {
             useK2 = false
             jvmTarget = javaVersion.toString()
-            freeCompilerArgs =
-                listOf("-Xenable-builder-inference")
         }
     }
 

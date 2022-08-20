@@ -1,5 +1,6 @@
 package coffee.cypher.aptitude.mixins;
 
+import coffee.cypher.aptitude.actions.VillagerEventHandler;
 import coffee.cypher.aptitude.datamodel.AptitudeVillagerData;
 import coffee.cypher.aptitude.datamodel.AptitudeVillagerDataUtil;
 import com.mojang.serialization.DataResult;
@@ -12,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(VillagerEntity.class)
-abstract class AptitudeVillagerDataMixin {
+abstract class AptitudeVillagerEntityMixin {
     @Inject(at = @At("TAIL"), method = "initDataTracker")
     private void aptitude$trackAptitudeData(CallbackInfo ci) {
         AptitudeVillagerDataUtil.startTrackingAptitude((VillagerEntity) (Object) this);
@@ -39,5 +40,10 @@ abstract class AptitudeVillagerDataMixin {
             .resultOrPartial(error -> {
             })
             .ifPresent(nbtElement -> nbt.put("AptitudeData", nbtElement));
+    }
+
+    @Inject(at = @At("TAIL"), method = "levelUp")
+    private void aptitude$onLevelUp(CallbackInfo ci) {
+        VillagerEventHandler.onVillagerLevelUp((VillagerEntity) (Object) this);
     }
 }
