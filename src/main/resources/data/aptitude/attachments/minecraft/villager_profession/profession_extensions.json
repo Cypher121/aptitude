@@ -7,6 +7,7 @@
                 "count": 6,
                 "description": "aptitude.workstations.coal"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:butcher": {
@@ -15,6 +16,7 @@
                 "count": 2,
                 "description": "aptitude.workstations.sweet_berry_bush"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:cartographer": {
@@ -22,6 +24,7 @@
                 "upgrade": "minecraft:lodestone",
                 "description": "aptitude.workstations.lodestone"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:cleric": {
@@ -30,6 +33,7 @@
                 "count": 2,
                 "description": "aptitude.workstations.soul_campfire"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:farmer": {
@@ -38,6 +42,7 @@
                 "count": 6,
                 "description": "aptitude.workstations.bone_block"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:fisherman": {
@@ -45,6 +50,7 @@
                 "upgrade": "minecraft:conduit",
                 "description": "aptitude.workstations.conduit"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:fletcher": {
@@ -53,6 +59,7 @@
                 "count": 1,
                 "description": "aptitude.workstations.target"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:leatherworker": {
@@ -61,14 +68,16 @@
                 "count": 3,
                 "description": "aptitude.workstations.cobweb"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:librarian": {
             "workstation_upgrade": {
-                "upgrade": "minecraft:candle",
+                "upgrade": "#minecraft:candles",
                 "count": 4,
                 "description": "aptitude.workstations.candle"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:mason": {
@@ -77,6 +86,7 @@
                 "count": 2,
                 "description": "aptitude.workstations.amethyst_block"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:shepherd": {
@@ -84,6 +94,7 @@
                 "upgrade": "minecraft:beehive",
                 "description": "aptitude.workstations.beehive"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:toolsmith": {
@@ -91,6 +102,7 @@
                 "upgrade": "minecraft:ancient_debris",
                 "description": "aptitude.workstations.ancient_debris"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:weaponsmith": {
@@ -98,6 +110,7 @@
                 "upgrade": "minecraft:anvil",
                 "description": "aptitude.workstations.anvil"
             },
+            "ability": "aptitude:no_ability",
             "aptitude_weight": 100
         },
         "minecraft:nitwit": "nitwit"

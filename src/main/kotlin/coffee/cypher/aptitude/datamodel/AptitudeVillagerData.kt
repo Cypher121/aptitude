@@ -2,14 +2,11 @@
 
 package coffee.cypher.aptitude.datamodel
 
+import coffee.cypher.aptitude.mixinaccessors.AptitudeVillagerDataAccessor
 import coffee.cypher.aptitude.registry.PROFESSION_EXTENSION_ATTACHMENT
 import coffee.cypher.aptitude.util.codecFunction
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.entity.data.DataTracker
-import net.minecraft.entity.data.TrackedData
-import net.minecraft.entity.data.TrackedDataHandler
-import net.minecraft.entity.data.TrackedDataHandlerRegistry
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.registry.Registry
@@ -111,6 +108,10 @@ data class AptitudeVillagerData(
                 .toMap()
                 .toMutableMap()
 
+            if (choices.isEmpty()) {
+                return AptitudeVillagerData(emptyMap())
+            }
+
             val lv2Aptitudes = List(lv2AptitudeCount) {
                 pickAndRemove(choices)
             }
@@ -129,32 +130,10 @@ data class AptitudeVillagerData(
 }
 
 var VillagerEntity.aptitudeData: AptitudeVillagerData
-    get() = dataTracker.get(TRACKING_KEY)
+    get() = (this as AptitudeVillagerDataAccessor).`aptitude$aptitudeVillagerData`
     set(value) {
-        dataTracker.set(TRACKING_KEY, value)
+        (this as AptitudeVillagerDataAccessor).`aptitude$aptitudeVillagerData` = value
     }
-
-fun VillagerEntity.startTrackingAptitude() {
-    dataTracker.startTracking(TRACKING_KEY, AptitudeVillagerData.createRandom())
-}
-
-
-private val TRACKING_KEY: TrackedData<AptitudeVillagerData> =
-    DataTracker.registerData(VillagerEntity::class.java, TrackingHandler)
-
-private object TrackingHandler : TrackedDataHandler.SimpleHandler<AptitudeVillagerData> {
-    init {
-        TrackedDataHandlerRegistry.register(this)
-    }
-
-    override fun write(buf: PacketByteBuf, value: AptitudeVillagerData) {
-        buf.writeAptitudeMap(value.professionAptitudes)
-    }
-
-    override fun read(buf: PacketByteBuf): AptitudeVillagerData {
-        return AptitudeVillagerData(buf.readAptitudeMap())
-    }
-}
 
 fun PacketByteBuf.writeAptitudeMap(
     map: Map<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>,

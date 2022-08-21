@@ -7,6 +7,7 @@ import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.quiltmc.loader.api.ModContainer
+import org.quiltmc.loader.api.QuiltLoader
 import org.quiltmc.qkl.wrapper.qsl.registerEvents
 import org.quiltmc.qkl.wrapper.qsl.resource.onDataPackReloadFinish
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer
@@ -34,12 +35,11 @@ object Aptitude : ModInitializer {
         registerEvents {
             onDataPackReloadFinish { _, _, _ ->
                 logger.info("Professions have ${PROFESSION_EXTENSION_ATTACHMENT.keySet().size} attachments")
-                PROFESSION_EXTENSION_ATTACHMENT.entryIterator().forEach {
-                    logger.info("${it.entry.name} associated with ${it.value}")
-                }
             }
         }
 
-        registerDebugUtils()
+        if (QuiltLoader.isDevelopmentEnvironment()) {
+            registerDebugUtils()
+        }
     }
 }

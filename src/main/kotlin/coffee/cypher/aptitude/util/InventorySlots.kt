@@ -21,7 +21,7 @@ value class InventorySlots(val internalInventorySize: Int) {
 }
 
 fun ScreenHandler.transferWithinPlayerInventory(
-    playerInventoryOffset: Int,
+    slotRanges: InventorySlots,
     player: PlayerEntity,
     index: Int
 ): ItemStack {
@@ -37,8 +37,6 @@ fun ScreenHandler.transferWithinPlayerInventory(
 
     val insertingStack = slot.stack
     val originalStack = insertingStack.copy()
-
-    val slotRanges = InventorySlots(playerInventoryOffset)
 
     if (index in slotRanges.playerMainInventorySlots) {
         if (!insertItem(insertingStack, slotRanges.playerHotbarSlots)) {

@@ -1,13 +1,17 @@
 package coffee.cypher.aptitude.gui
 
-import coffee.cypher.aptitude.datamodel.AptitudeLevel
-import coffee.cypher.aptitude.datamodel.readAptitudeMapWithActive
+import coffee.cypher.aptitude.abilities.base.VillagerAbility
+import coffee.cypher.aptitude.abilities.base.client.VillagerAbilityClient
+import coffee.cypher.aptitude.datamodel.*
 import coffee.cypher.aptitude.registry.APTITUDE_VILLAGER_SCREEN_HANDLER
+import coffee.cypher.aptitude.registry.CLIENT_ABILITY_REGISTRY
+import coffee.cypher.aptitude.registry.PROFESSION_EXTENSION_ATTACHMENT
+import coffee.cypher.aptitude.util.InventorySlots
 import coffee.cypher.aptitude.util.transferWithinPlayerInventory
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.inventory.SimpleInventory
+import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.ScreenHandler
@@ -23,17 +27,36 @@ sealed class AptitudeVillagerScreenHandler(
         const val INVENTORY_Y = 115
         const val HOTBAR_Y = 173
 
-        const val INTERNAL_SLOT_COUNT = 1
+        fun writeBuffer(buf: PacketByteBuf, villager: VillagerEntity) {
+            buf.writeAptitudeMap(
+                villager.aptitudeData.professionAptitudes,
+                villager.villagerData.profession
+            )
+
+            buf.writeByte(villager.villagerData.level)
+        }
     }
 
-    private val internalInventory = SimpleInventory(INTERNAL_SLOT_COUNT)
+    abstract val ability: VillagerAbility?
 
-    init {
-        this.addSlot(Slot(internalInventory, 0, 60, 60))
+    val slotRanges
+        get() = InventorySlots(ability?.slots?.size ?: 0)
+
+    protected fun addSlots() {
+        ability?.slots?.forEach {
+            addSlot(it)
+        }
 
         repeat(3) { row ->
             repeat(9) { column ->
-                this.addSlot(Slot(playerInventory, column + row * 9 + 9, INVENTORY_X + column * 18, INVENTORY_Y + row * 18))
+                addSlot(
+                    Slot(
+                        playerInventory,
+                        column + row * 9 + 9,
+                        INVENTORY_X + column * 18,
+                        INVENTORY_Y + row * 18
+                    )
+                )
             }
         }
 
@@ -42,12 +65,37 @@ sealed class AptitudeVillagerScreenHandler(
         }
     }
 
-    override fun canInsertIntoSlot(slot: Slot): Boolean {
-        return false
+    override fun transferSlot(player: PlayerEntity, index: Int): ItemStack {
+        val currentAbility = ability
+
+        if (currentAbility != null) {
+            val abilityTransfer = with(currentAbility) { transfer(player, index) }
+
+            if (!abilityTransfer.isEmpty) {
+                return abilityTransfer
+            }
+        }
+
+        return transferWithinPlayerInventory(slotRanges, player, index)
     }
 
-    override fun transferSlot(player: PlayerEntity, index: Int): ItemStack {
-        return transferWithinPlayerInventory(INTERNAL_SLOT_COUNT, player, index)
+    override fun close(player: PlayerEntity) {
+        super.close(player)
+        val currentAbility = ability
+
+        if (currentAbility != null) {
+            with(currentAbility) { onClose(player) }
+        }
+    }
+
+    override fun onContentChanged(inventory: Inventory) {
+        val currentAbility = ability
+
+        if (currentAbility != null && inventory in currentAbility.inventories) {
+            with(currentAbility) { contentChanged(inventory) }
+        }
+
+        super.onContentChanged(inventory)
     }
 
     class Server(
@@ -57,6 +105,29 @@ sealed class AptitudeVillagerScreenHandler(
     ) : AptitudeVillagerScreenHandler(syncId, playerInventory) {
         override fun canUse(player: PlayerEntity): Boolean {
             return villager.currentCustomer == player
+        }
+
+        override val ability: VillagerAbility?
+
+        init {
+            ability = readAbility()
+
+            addSlots()
+        }
+
+        private fun readAbility(): VillagerAbilityClient? {
+            val aptLevels = villager.aptitudeData.getAptitudeLevels(
+                villager.villagerData.profession
+            )
+
+            if (aptLevels.first < AptitudeLevel.ADVANCED) {
+                return null
+            }
+
+            val attachment = PROFESSION_EXTENSION_ATTACHMENT[villager.villagerData.profession].orElse(null)
+                    as? ProfessionExtension.Regular ?: return null
+
+            return CLIENT_ABILITY_REGISTRY.getValue(attachment.ability)()
         }
 
         override fun close(player: PlayerEntity) {
@@ -78,11 +149,52 @@ sealed class AptitudeVillagerScreenHandler(
 
         val aptitudes: Map<VillagerProfession, Pair<AptitudeLevel, AptitudeLevel>>
         val active: VillagerProfession?
+        val professionLevel: Int
+
+        val currentTargetsFound: Int = 0
+        val requiredTargetsFound: Int
+
+        override val ability: VillagerAbilityClient?
 
         init {
             val (aptitudes, active) = buf.readAptitudeMapWithActive()
             this.aptitudes = aptitudes
             this.active = active
+
+            professionLevel = buf.readByte().toInt()
+            requiredTargetsFound = if (active == null) {
+                0
+            } else {
+                val attachment = PROFESSION_EXTENSION_ATTACHMENT[active].orElse(null)
+
+                if (attachment !is ProfessionExtension.Regular) {
+                    0
+                } else {
+                    attachment.workstationUpgrade.count
+                }
+            }
+
+            ability = readAbility()
+
+            addSlots()
+        }
+
+        //TODO dedupe with screen logic
+        private fun readAbility(): VillagerAbilityClient? {
+            if (active == null) {
+                return null
+            }
+
+            val aptLevels = aptitudes[active] ?: return null
+
+            if (aptLevels.first < AptitudeLevel.ADVANCED) {
+                return null
+            }
+
+            val attachment = PROFESSION_EXTENSION_ATTACHMENT[active].orElse(null)
+                    as? ProfessionExtension.Regular ?: return null
+
+            return CLIENT_ABILITY_REGISTRY.getValue(attachment.ability)()
         }
     }
 }

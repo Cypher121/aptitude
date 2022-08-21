@@ -18,7 +18,23 @@
         "gui": {
             "open_screen": "Open Aptitude",
             "close_screen": "Return to trade",
-            "special_trade": "Trade offer provided by aptitude (level: %s)"
+            "special_trade": "Trade offer provided by aptitude (level: %s)",
+            "current_aptitude": "Aptitude level: ",
+            "max_reached": "Maximum aptitude reached",
+            "next_aptitude": "Next level: ",
+            "insufficient_profession": "Insufficient profession level (required: %s)",
+            "level_ready": "Ready to level up!",
+            "special_ability": {
+                "unavailable": "Special ability unavailable",
+                "insufficient_aptitude": "Aptitude too low",
+                "not_enough_upgrades": "Not enough upgrades",
+                "workstation_upgrade": "Upgrades found: %s",
+                "fraction_format": "%s / %s"
+            }
+        },
+        "notification": {
+            "max_reached": "Aptitude already at maximum",
+            "insufficient_profession": "Insufficient profession level"
         },
         "level": {
             "0": "None",
@@ -26,5 +42,8 @@
             "2": "Advanced",
             "3": "Adept"
         }
+    },
+    "item.aptitude": {
+        "aptitude_increase_item": "Tome of Aptitude"
     }
 }

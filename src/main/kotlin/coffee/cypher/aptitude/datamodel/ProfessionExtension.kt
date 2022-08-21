@@ -10,6 +10,7 @@ import com.mojang.serialization.codecs.OptionalFieldCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.block.Block
 import net.minecraft.tag.TagKey
+import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import java.util.*
 
@@ -18,7 +19,8 @@ sealed interface ProfessionExtension {
 
     data class Regular(
         val workstationUpgrade: Upgrade,
-        val aptitudeWeight: Int
+        val aptitudeWeight: Int,
+        val ability: Identifier
     ) : ProfessionExtension {
         data class Upgrade(
             val station: Either<Block, TagKey<Block>>,
@@ -52,7 +54,9 @@ sealed interface ProfessionExtension {
                     Upgrade.CODEC.fieldOf("workstation_upgrade")
                         .forGetter(Regular::workstationUpgrade),
                     Codec.intRange(1, Int.MAX_VALUE).fieldOf("aptitude_weight")
-                        .forGetter(Regular::aptitudeWeight)
+                        .forGetter(Regular::aptitudeWeight),
+                    Identifier.CODEC.fieldOf("ability")
+                        .forGetter(Regular::ability)
                 ).apply(regular, regular.stable(::Regular.codecFunction))
             }
         }

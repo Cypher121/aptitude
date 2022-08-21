@@ -20,10 +20,7 @@ fun increaseAptitude(villagerEntity: VillagerEntity) {
     val profession = villagerEntity.villagerData.profession
     val profLevel = villagerEntity.villagerData.level
 
-    val (current, max) = villagerEntity.aptitudeData.professionAptitudes.getOrDefault(
-        profession,
-        AptitudeLevel.NONE to AptitudeLevel.NONE
-    )
+    val (current, max) = villagerEntity.aptitudeData.getAptitudeLevels(profession)
 
     if (max <= current || profLevel < current.next.professionLevel) {
         return

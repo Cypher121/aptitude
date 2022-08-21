@@ -1,8 +1,6 @@
 package coffee.cypher.aptitude.gui.packets
 
 import coffee.cypher.aptitude.Aptitude
-import coffee.cypher.aptitude.datamodel.aptitudeData
-import coffee.cypher.aptitude.datamodel.writeAptitudeMap
 import coffee.cypher.aptitude.gui.AptitudeVillagerScreenHandler
 import coffee.cypher.aptitude.mixinaccessors.beginTradeWith
 import coffee.cypher.aptitude.mixinaccessors.merchant
@@ -56,6 +54,8 @@ class AptitudeToggleVillagerScreenC2SPacket(val syncId: Int, val enableAptitude:
                 val villager = screenHandler.merchant as? VillagerEntity ?: return
 
                 server.execute {
+                    player.closeHandledScreen()
+
                     player.openHandledScreen(object : ExtendedScreenHandlerFactory {
                         override fun createMenu(
                             syncId: Int,
@@ -72,10 +72,7 @@ class AptitudeToggleVillagerScreenC2SPacket(val syncId: Int, val enableAptitude:
                         override fun getDisplayName() = villager.displayName
 
                         override fun writeScreenOpeningData(player: ServerPlayerEntity, buf: PacketByteBuf) {
-                            buf.writeAptitudeMap(
-                                villager.aptitudeData.professionAptitudes,
-                                villager.villagerData.profession
-                            )
+                            AptitudeVillagerScreenHandler.writeBuffer(buf, villager)
                         }
                     })
 
