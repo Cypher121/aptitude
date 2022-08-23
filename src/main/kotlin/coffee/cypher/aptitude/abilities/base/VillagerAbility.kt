@@ -1,6 +1,5 @@
 package coffee.cypher.aptitude.abilities.base
 
-import coffee.cypher.aptitude.gui.AptitudeVillagerScreenHandler
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
@@ -11,10 +10,6 @@ interface VillagerAbility {
 
     val inventories: List<Inventory>
 
-    fun AptitudeVillagerScreenHandler.transfer(player: PlayerEntity, index: Int): ItemStack
-
-    fun AptitudeVillagerScreenHandler.contentChanged(inventory: Inventory)
-
-    fun AptitudeVillagerScreenHandler.onClose(player: PlayerEntity)
+    fun transfer(player: PlayerEntity, index: Int): ItemStack
 }
 

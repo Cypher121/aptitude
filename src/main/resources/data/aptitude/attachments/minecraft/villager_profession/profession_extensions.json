@@ -77,7 +77,7 @@
                 "count": 4,
                 "description": "aptitude.workstations.candle"
             },
-            "ability": "aptitude:no_ability",
+            "ability": "aptitude:upgrade_enchanted_book",
             "aptitude_weight": 100
         },
         "minecraft:mason": {

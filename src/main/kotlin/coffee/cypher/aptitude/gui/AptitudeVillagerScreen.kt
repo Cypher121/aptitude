@@ -153,6 +153,19 @@ class AptitudeVillagerScreen(
             backgroundWidth, backgroundHeight,
             TEX_WIDTH, TEX_HEIGHT
         )
+
+        with(handler.ability ?: return) {
+            matrices.push()
+            matrices.translate(
+                x + AptitudeVillagerScreenHandler.ABILITY_START_X.toDouble(),
+                y + AptitudeVillagerScreenHandler.ABILITY_START_Y.toDouble(),
+                zOffset.toDouble()
+            )
+
+            drawAbility(matrices, mouseX, mouseY)
+
+            matrices.pop()
+        }
     }
 
     override fun drawForeground(matrices: MatrixStack, mouseX: Int, mouseY: Int) {
@@ -213,8 +226,9 @@ class AptitudeVillagerScreen(
             }
 
             if (it.shouldShowUpgradeCount &&
-                    relMouseX in UPGRADE_ITEM_X until (UPGRADE_ITEM_X + UPGRADE_ITEM_SIZE) &&
-                    relMouseY in UPGRADE_ITEM_Y until (UPGRADE_ITEM_Y + UPGRADE_ITEM_SIZE)) {
+                relMouseX in UPGRADE_ITEM_X until (UPGRADE_ITEM_X + UPGRADE_ITEM_SIZE) &&
+                relMouseY in UPGRADE_ITEM_Y until (UPGRADE_ITEM_Y + UPGRADE_ITEM_SIZE)
+            ) {
                 renderOrderedTooltip(
                     matrices,
                     it.upgradeTooltip,

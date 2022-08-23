@@ -29,7 +29,10 @@
                 "insufficient_aptitude": "Aptitude too low",
                 "not_enough_upgrades": "Not enough upgrades",
                 "workstation_upgrade": "Upgrades found: %s",
-                "fraction_format": "%s / %s"
+                "fraction_format": "%s / %s",
+                "upgrade_enchanted_book": {
+                    "title": "Upgrade enchanted book"
+                }
             }
         },
         "notification": {

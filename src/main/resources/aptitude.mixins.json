@@ -5,9 +5,10 @@
     "compatibilityLevel": "JAVA_17",
     "mixins": [
         "AptitudeTradeOfferMixin", "AptitudeVillagerEntityMixin",
-        "accessors.MerchantEntityAccessor",
+        "accessors.BrainProfileAccessor", "accessors.MerchantEntityAccessor",
         "accessors.MerchantScreenHandlerAccessor",
-        "accessors.ScreenHandlerAccessor", "accessors.VillagerEntityAccessor"
+        "accessors.ScreenHandlerAccessor", "accessors.SensorTypeAccessor",
+        "accessors.VillagerEntityAccessor"
     ],
     "client": ["AptitudeMerchantScreenMixin", "AptitudeTradeOfferWidgetMixin"],
     "injectors": {

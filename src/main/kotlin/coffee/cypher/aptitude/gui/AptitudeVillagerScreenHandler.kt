@@ -3,15 +3,12 @@ package coffee.cypher.aptitude.gui
 import coffee.cypher.aptitude.abilities.base.VillagerAbility
 import coffee.cypher.aptitude.abilities.base.client.VillagerAbilityClient
 import coffee.cypher.aptitude.datamodel.*
-import coffee.cypher.aptitude.registry.APTITUDE_VILLAGER_SCREEN_HANDLER
-import coffee.cypher.aptitude.registry.CLIENT_ABILITY_REGISTRY
-import coffee.cypher.aptitude.registry.PROFESSION_EXTENSION_ATTACHMENT
+import coffee.cypher.aptitude.registry.*
 import coffee.cypher.aptitude.util.InventorySlots
 import coffee.cypher.aptitude.util.transferWithinPlayerInventory
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.ScreenHandler
@@ -27,6 +24,12 @@ sealed class AptitudeVillagerScreenHandler(
         const val INVENTORY_Y = 115
         const val HOTBAR_Y = 173
 
+        const val ABILITY_START_X = 107
+        const val ABILITY_START_Y = 25
+
+        const val ABILITY_MAX_WIDTH = 162
+        const val ABILITY_MAX_HEIGHT = 79
+
         fun writeBuffer(buf: PacketByteBuf, villager: VillagerEntity) {
             buf.writeAptitudeMap(
                 villager.aptitudeData.professionAptitudes,
@@ -34,6 +37,7 @@ sealed class AptitudeVillagerScreenHandler(
             )
 
             buf.writeByte(villager.villagerData.level)
+            buf.writeVarInt(villager.brain.getOptionalMemory(TRACKED_UPGRADES_MEMORY_MODULE).orElse(0))
         }
     }
 
@@ -69,7 +73,7 @@ sealed class AptitudeVillagerScreenHandler(
         val currentAbility = ability
 
         if (currentAbility != null) {
-            val abilityTransfer = with(currentAbility) { transfer(player, index) }
+            val abilityTransfer = currentAbility.transfer(player, index)
 
             if (!abilityTransfer.isEmpty) {
                 return abilityTransfer
@@ -81,21 +85,10 @@ sealed class AptitudeVillagerScreenHandler(
 
     override fun close(player: PlayerEntity) {
         super.close(player)
-        val currentAbility = ability
 
-        if (currentAbility != null) {
-            with(currentAbility) { onClose(player) }
+        ability?.inventories?.forEach {
+            dropInventory(player, it)
         }
-    }
-
-    override fun onContentChanged(inventory: Inventory) {
-        val currentAbility = ability
-
-        if (currentAbility != null && inventory in currentAbility.inventories) {
-            with(currentAbility) { contentChanged(inventory) }
-        }
-
-        super.onContentChanged(inventory)
     }
 
     class Server(
@@ -115,7 +108,7 @@ sealed class AptitudeVillagerScreenHandler(
             addSlots()
         }
 
-        private fun readAbility(): VillagerAbilityClient? {
+        private fun readAbility(): VillagerAbility? {
             val aptLevels = villager.aptitudeData.getAptitudeLevels(
                 villager.villagerData.profession
             )
@@ -124,10 +117,17 @@ sealed class AptitudeVillagerScreenHandler(
                 return null
             }
 
+
             val attachment = PROFESSION_EXTENSION_ATTACHMENT[villager.villagerData.profession].orElse(null)
                     as? ProfessionExtension.Regular ?: return null
 
-            return CLIENT_ABILITY_REGISTRY.getValue(attachment.ability)()
+            if (villager.brain.getOptionalMemory(TRACKED_UPGRADES_MEMORY_MODULE)
+                    .orElse(0) < attachment.workstationUpgrade.count
+            ) {
+                return null
+            }
+
+            return ABILITY_REGISTRY.getValue(attachment.ability)(this)
         }
 
         override fun close(player: PlayerEntity) {
@@ -151,7 +151,7 @@ sealed class AptitudeVillagerScreenHandler(
         val active: VillagerProfession?
         val professionLevel: Int
 
-        val currentTargetsFound: Int = 0
+        val currentTargetsFound: Int
         val requiredTargetsFound: Int
 
         override val ability: VillagerAbilityClient?
@@ -162,6 +162,8 @@ sealed class AptitudeVillagerScreenHandler(
             this.active = active
 
             professionLevel = buf.readByte().toInt()
+
+            currentTargetsFound = buf.readVarInt()
             requiredTargetsFound = if (active == null) {
                 0
             } else {
@@ -191,10 +193,14 @@ sealed class AptitudeVillagerScreenHandler(
                 return null
             }
 
+            if (currentTargetsFound < requiredTargetsFound) {
+                return null
+            }
+
             val attachment = PROFESSION_EXTENSION_ATTACHMENT[active].orElse(null)
                     as? ProfessionExtension.Regular ?: return null
 
-            return CLIENT_ABILITY_REGISTRY.getValue(attachment.ability)()
+            return CLIENT_ABILITY_REGISTRY.getValue(attachment.ability)(this)
         }
     }
 }

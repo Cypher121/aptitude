@@ -2,7 +2,6 @@ package coffee.cypher.aptitude.abilities.base
 
 import coffee.cypher.aptitude.abilities.base.client.VillagerAbilityClient
 import coffee.cypher.aptitude.gui.AptitudeVillagerScreen
-import coffee.cypher.aptitude.gui.AptitudeVillagerScreenHandler
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.util.math.MatrixStack
@@ -15,14 +14,8 @@ open class NoOpAbility : VillagerAbility {
     override val slots: List<Slot> = emptyList()
     override val inventories: List<Inventory> = emptyList()
 
-    override fun AptitudeVillagerScreenHandler.transfer(player: PlayerEntity, index: Int): ItemStack {
+    override fun transfer(player: PlayerEntity, index: Int): ItemStack {
         return ItemStack.EMPTY
-    }
-
-    override fun AptitudeVillagerScreenHandler.contentChanged(inventory: Inventory) {
-    }
-
-    override fun AptitudeVillagerScreenHandler.onClose(player: PlayerEntity) {
     }
 }
 
