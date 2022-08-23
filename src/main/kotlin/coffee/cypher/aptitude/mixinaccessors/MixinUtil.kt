@@ -1,16 +1,10 @@
-@file:Suppress("KotlinConstantConditions", "UNCHECKED_CAST")
-
 package coffee.cypher.aptitude.mixinaccessors
 
-import coffee.cypher.aptitude.mixins.accessors.BrainProfileAccessor
 import coffee.cypher.aptitude.mixins.accessors.MerchantEntityAccessor
 import coffee.cypher.aptitude.mixins.accessors.MerchantScreenHandlerAccessor
 import coffee.cypher.aptitude.mixins.accessors.ScreenHandlerAccessor
 import coffee.cypher.aptitude.mixins.accessors.SensorTypeAccessor
 import coffee.cypher.aptitude.mixins.accessors.VillagerEntityAccessor
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.ai.brain.Brain
-import net.minecraft.entity.ai.brain.MemoryModuleType
 import net.minecraft.entity.ai.brain.sensor.Sensor
 import net.minecraft.entity.ai.brain.sensor.SensorType
 import net.minecraft.entity.passive.MerchantEntity
@@ -44,12 +38,6 @@ fun VillagerEntity.beginTradeWith(player: PlayerEntity) {
 var TradeOffer.offeredByAptitudeLevel
     get() = (this as AptitudeTradeOfferAccessor).`aptitude$offeredByAptitudeLevel`
     set(value) { (this as AptitudeTradeOfferAccessor).`aptitude$offeredByAptitudeLevel` = value }
-
-val Brain.Profile<*>.memoryModuleTypes: Collection<MemoryModuleType<*>>
-    get() = (this as BrainProfileAccessor).`aptitude$getMemoryModules`()
-
-val <E : LivingEntity> Brain.Profile<E>.sensors: Collection<SensorType<out Sensor<in E>>>
-    get() = (this as BrainProfileAccessor).`aptitude$getSensors`() as Collection<SensorType<out Sensor<in E>>>
 
 fun <U : Sensor<in Any?>> SensorType(factory: () -> U): SensorType<U> {
     return SensorTypeAccessor.`aptitude$createSensorType`(factory)

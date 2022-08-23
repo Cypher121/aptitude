@@ -4,10 +4,9 @@ import coffee.cypher.aptitude.actions.VillagerEventHandler;
 import coffee.cypher.aptitude.datamodel.AptitudeVillagerData;
 import coffee.cypher.aptitude.items.AptitudeIncreaseItem;
 import coffee.cypher.aptitude.mixinaccessors.AptitudeVillagerDataAccessor;
-import coffee.cypher.aptitude.mixinaccessors.MixinUtilKt;
 import coffee.cypher.aptitude.registry.RegistryKt;
 import com.mojang.serialization.DataResult;
-import net.minecraft.entity.ai.brain.Brain;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.entity.passive.VillagerEntity;
@@ -20,9 +19,11 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 @Mixin(VillagerEntity.class)
@@ -76,17 +77,33 @@ abstract class AptitudeVillagerEntityMixin implements AptitudeVillagerDataAccess
         this.aptitude$aptitudeVillagerData = avd;
     }
 
-    //TODO this is bad?
-    @Inject(at = @At("RETURN"), method = "createBrainProfile", cancellable = true)
-    void aptitude$addBrainComponents(CallbackInfoReturnable<Brain.Profile<VillagerEntity>> cir) {
-        var currentProfile = cir.getReturnValue();
-
-        var newMemories = new HashSet<>(MixinUtilKt.getMemoryModuleTypes(currentProfile));
+    @ModifyArg(
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/entity/ai/brain/Brain;createProfile(Ljava/util/Collection;Ljava/util/Collection;)Lnet/minecraft/entity/ai/brain/Brain$Profile;"
+        ),
+        method = "createBrainProfile",
+        index = 0
+    )
+    Collection<? extends MemoryModuleType<?>> aptitude$addBrainMemories(Collection<? extends MemoryModuleType<?>> memoryModules) {
+        var newMemories = new HashSet<MemoryModuleType<?>>(memoryModules);
         newMemories.add(RegistryKt.getTRACKED_UPGRADES_MEMORY_MODULE());
 
-        var newSensors = new HashSet<>(MixinUtilKt.getSensors(currentProfile));
-        newSensors.add((SensorType<? extends Sensor<? super VillagerEntity>>) RegistryKt.getWORKSTATION_UPGRADES_SENSOR_TYPE());
+        return newMemories;
+    }
 
-        cir.setReturnValue(Brain.createProfile(newMemories, newSensors));
+    @ModifyArg(
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/entity/ai/brain/Brain;createProfile(Ljava/util/Collection;Ljava/util/Collection;)Lnet/minecraft/entity/ai/brain/Brain$Profile;"
+        ),
+        method = "createBrainProfile",
+        index = 1
+    )
+    Collection<? extends SensorType<? extends Sensor<?>>> aptitude$addBrainSensors(Collection<? extends SensorType<? extends Sensor<?>>> sensorTypes) {
+        var newSensors = new HashSet<SensorType<? extends Sensor<?>>>(sensorTypes);
+        newSensors.add(RegistryKt.getWORKSTATION_UPGRADES_SENSOR_TYPE());
+
+        return newSensors;
     }
 }
