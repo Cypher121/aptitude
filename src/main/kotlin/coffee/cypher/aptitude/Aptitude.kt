@@ -12,8 +12,6 @@ import org.quiltmc.qkl.wrapper.qsl.registerEvents
 import org.quiltmc.qkl.wrapper.qsl.resource.onDataPackReloadFinish
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer
 
-//TODO hook into level up/refresh trades for adding extra trades
-//TODO add memories/poi/tasks for advanced job sites
 //TODO actually come up with effects
 //TODO item for nitwit replacement. aptitude 3 in a job, locked to that job
 
